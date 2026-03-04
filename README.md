@@ -26,13 +26,20 @@
   - GPT系列
   - T5、BART等
 
-### 3. Code Agent
+### 3. RAG检索增强生成
+- [RAG系统详解](./rag_system.md)
+  - RAG核心架构
+  - 向量数据库选型
+  - 检索策略与优化
+  - 企业级实战
+
+### 4. Code Agent
 - [Code Agent开发](./code_agent.md)
   - Agent架构设计
   - 工具调用机制
   - 实战案例
 
-### 4. 算法题
+### 5. 算法题
 - [高频算法题详解](./algorithm_questions.md)
   - 动态规划
   - 双指针
