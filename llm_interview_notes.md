@@ -140,8 +140,100 @@ def binary_search(arr, target):
 - 展现自己的学习能力和思考方式
 - 对于核心概念（如Transformer），准备好画图讲解
 
-## 6. 参考资料
+## 6. 高级知识点
+
+### 6.1 KV-Cache机制
+**定义**：在自回归生成时缓存之前计算的Key和Value，避免重复计算。
+
+**问题**：
+- GPT生成第t个token时需要计算所有前t-1个token的attention
+- 每生成一个token都要重新计算所有历史的K、V矩阵
+
+**解决**：
+- 第1次：计算token1的K1、V1，缓存
+- 第2次：只计算token2的K2、V2，与K1、V1拼接使用
+- 第t次：只计算Kt、Vt，与缓存的K1...Kt-1拼接
+
+**效果**：
+- 时间复杂度：O(n²) → O(n)
+- 空间换时间：需要缓存所有历史K、V
+- 长文本生成必备优化
+
+### 6.2 位置编码详解
+
+**绝对位置编码（BERT/GPT）**：
+```python
+PE(pos, 2i) = sin(pos / 10000^(2i/d_model))
+PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
+```
+- 优点：简单有效
+- 缺点：难以外推到更长序列
+
+**RoPE（旋转位置编码，LLaMA/GLM）**：
+- 相对位置信息
+- 通过旋转矩阵实现
+- 支持外推到训练时未见过的长度
+- 公式：q_m = R_θ(m) * q, k_n = R_θ(n) * k
+
+**ALiBi（Attention with Linear Biases）**：
+- 不用位置编码，直接在attention矩阵上加偏置
+- bias = -|i-j| * slope
+- 外推能力更强
+
+### 6.3 Flash Attention
+**核心思想**：优化Attention计算的内存访问模式
+
+**传统Attention问题**：
+- 需要存储整个attention矩阵（n×n）
+- HBM（显存）访问慢
+- 对长序列内存占用大
+
+**Flash Attention优化**：
+- Tiling：分块计算
+- 利用SRAM（快速缓存）
+- 在线softmax计算
+- 减少显存占用，加速2-4倍
+
+### 6.4 模型量化
+**目的**：减少模型大小和推理时间
+
+**量化方法**：
+- **FP16/BF16**：半精度（从FP32）
+- **INT8**：8位整数量化
+- **INT4**：4位整数量化（QLoRA）
+
+**量化感知训练（QAT）**：
+- 训练时模拟量化过程
+- 精度损失小
+
+**后训练量化（PTQ）**：
+- 训练后直接量化
+- 简单快速，精度略有损失
+
+### 6.5 LoRA（Low-Rank Adaptation）
+**核心思想**：冻结原模型，只训练低秩矩阵
+
+**公式**：
+```
+W' = W + ΔW
+ΔW = A × B  (A: d×r, B: r×k, r<<d)
+```
+
+**优势**：
+- 参数量大幅减少（0.1%-1%）
+- 多任务可切换（只换A、B矩阵）
+- 训练速度快
+- 显存占用小
+
+**QLoRA**：
+- LoRA + INT4量化
+- 在消费级GPU上微调大模型
+
+## 7. 参考资料
 - 飞书文档：[xfan_面试强化](https://my.feishu.cn/docs/doccnqO8g5vIdVAgJ0PXbYNsJWe)
 - 《百面自然语言处理》
 - 《深度学习》花书
 - Transformer原始论文：Attention Is All You Need
+- Flash Attention: https://arxiv.org/abs/2205.14135
+- LoRA: https://arxiv.org/abs/2106.09685
+- RoFormer (RoPE): https://arxiv.org/abs/2104.09864
