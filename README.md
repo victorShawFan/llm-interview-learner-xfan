@@ -54,13 +54,20 @@
   - 3D并行策略
   - 5个核心面试题
 
-### 7. Code Agent
+### 7. LLM安全与对齐
+- [安全对齐技术](./llm_security_alignment.md)
+  - RLHF三阶段训练
+  - DPO直接偏好优化
+  - 红队测试与攻防
+  - 5个高频面试题
+
+### 8. Code Agent
 - [Code Agent开发](./code_agent.md)
   - Agent架构设计
   - 工具调用机制
   - 实战案例
 
-### 8. 算法题
+### 9. 算法题
 - [高频算法题详解](./algorithm_questions.md)
   - 动态规划
   - 双指针
