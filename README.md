@@ -40,13 +40,20 @@
   - 结构化输出技巧
   - 7个常见面试题
 
-### 5. Code Agent
+### 5. 多模态大模型
+- [多模态LLM](./multimodal_llm.md)
+  - CLIP/ViT架构详解
+  - 跨模态特征对齐
+  - GPT-4V/Gemini原理
+  - 5个核心面试题
+
+### 6. Code Agent
 - [Code Agent开发](./code_agent.md)
   - Agent架构设计
   - 工具调用机制
   - 实战案例
 
-### 6. 算法题
+### 7. 算法题
 - [高频算法题详解](./algorithm_questions.md)
   - 动态规划
   - 双指针
