@@ -47,13 +47,20 @@
   - GPT-4V/Gemini原理
   - 5个核心面试题
 
-### 6. Code Agent
+### 6. 分布式训练
+- [分布式训练技术](./distributed_training.md)
+  - 数据并行/模型并行/流水线并行
+  - DeepSpeed ZeRO优化器
+  - 3D并行策略
+  - 5个核心面试题
+
+### 7. Code Agent
 - [Code Agent开发](./code_agent.md)
   - Agent架构设计
   - 工具调用机制
   - 实战案例
 
-### 7. 算法题
+### 8. 算法题
 - [高频算法题详解](./algorithm_questions.md)
   - 动态规划
   - 双指针
