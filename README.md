@@ -33,13 +33,20 @@
   - 检索策略与优化
   - 企业级实战
 
-### 4. Code Agent
+### 4. Prompt Engineering
+- [提示词工程](./prompt_engineering.md)
+  - Zero-Shot/Few-Shot/CoT
+  - ReAct框架与思维链
+  - 结构化输出技巧
+  - 7个常见面试题
+
+### 5. Code Agent
 - [Code Agent开发](./code_agent.md)
   - Agent架构设计
   - 工具调用机制
   - 实战案例
 
-### 5. 算法题
+### 6. 算法题
 - [高频算法题详解](./algorithm_questions.md)
   - 动态规划
   - 双指针
