@@ -383,6 +383,460 @@ def longestCommonSubsequence(text1, text2):
 
 ---
 
+## 📌 滑动窗口
+
+### 11. 滑动窗口最大值（LeetCode 239）
+**题目**：给定数组和窗口大小k，返回每个窗口中的最大值。
+
+```python
+from collections import deque
+
+def maxSlidingWindow(nums, k):
+    """
+    单调递减队列
+    """
+    if not nums:
+        return []
+    
+    result = []
+    dq = deque()  # 存储索引
+    
+    for i in range(len(nums)):
+        # 移除窗口外的元素
+        if dq and dq[0] < i - k + 1:
+            dq.popleft()
+        
+        # 维护单调递减：移除比当前元素小的
+        while dq and nums[dq[-1]] < nums[i]:
+            dq.pop()
+        
+        dq.append(i)
+        
+        # 窗口形成后开始记录结果
+        if i >= k - 1:
+            result.append(nums[dq[0]])
+    
+    return result
+
+# 示例
+nums = [1,3,-1,-3,5,3,6,7]
+k = 3
+print(maxSlidingWindow(nums, k))
+# 输出: [3,3,5,5,6,7]
+
+# 时间复杂度: O(n)
+# 空间复杂度: O(k)
+```
+
+**面试技巧**：
+- 说明为什么用单调队列
+- 时间复杂度从O(n*k)优化到O(n)
+
+### 12. 无重复字符的最长子串（LeetCode 3）
+**题目**：找出不含有重复字符的最长子串的长度。
+
+```python
+def lengthOfLongestSubstring(s):
+    """
+    滑动窗口 + 哈希表
+    """
+    if not s:
+        return 0
+    
+    char_index = {}  # 记录字符最后出现的位置
+    max_len = 0
+    left = 0
+    
+    for right in range(len(s)):
+        char = s[right]
+        
+        # 如果字符已存在且在窗口内，移动左边界
+        if char in char_index and char_index[char] >= left:
+            left = char_index[char] + 1
+        
+        char_index[char] = right
+        max_len = max(max_len, right - left + 1)
+    
+    return max_len
+
+# 示例
+print(lengthOfLongestSubstring("abcabcbb"))  # 3 ("abc")
+print(lengthOfLongestSubstring("bbbbb"))     # 1 ("b")
+
+# 时间复杂度: O(n)
+# 空间复杂度: O(min(m, n)) m为字符集大小
+```
+
+### 13. 最小覆盖子串（LeetCode 76）
+**题目**：找出s中涵盖t所有字符的最小子串。
+
+```python
+from collections import Counter
+
+def minWindow(s, t):
+    """
+    滑动窗口 + 计数器
+    """
+    if not s or not t:
+        return ""
+    
+    # 统计t中字符频率
+    need = Counter(t)
+    window = {}
+    
+    left = 0
+    valid = 0  # 已满足条件的字符数
+    start = 0
+    min_len = float('inf')
+    
+    for right in range(len(s)):
+        char = s[right]
+        
+        # 加入窗口
+        if char in need:
+            window[char] = window.get(char, 0) + 1
+            if window[char] == need[char]:
+                valid += 1
+        
+        # 尝试收缩窗口
+        while valid == len(need):
+            # 更新最小窗口
+            if right - left + 1 < min_len:
+                start = left
+                min_len = right - left + 1
+            
+            # 移除左边界字符
+            remove_char = s[left]
+            if remove_char in need:
+                if window[remove_char] == need[remove_char]:
+                    valid -= 1
+                window[remove_char] -= 1
+            
+            left += 1
+    
+    return s[start:start+min_len] if min_len != float('inf') else ""
+
+# 示例
+print(minWindow("ADOBECODEBANC", "ABC"))  # "BANC"
+
+# 时间复杂度: O(|s| + |t|)
+# 空间复杂度: O(|s| + |t|)
+```
+
+### 14. 找到字符串中所有字母异位词（LeetCode 438）
+**题目**：找到s中所有p的异位词的起始索引。
+
+```python
+from collections import Counter
+
+def findAnagrams(s, p):
+    """
+    滑动窗口 + 计数器
+    """
+    if len(s) < len(p):
+        return []
+    
+    need = Counter(p)
+    window = {}
+    
+    result = []
+    left = 0
+    valid = 0
+    
+    for right in range(len(s)):
+        char = s[right]
+        
+        if char in need:
+            window[char] = window.get(char, 0) + 1
+            if window[char] == need[char]:
+                valid += 1
+        
+        # 窗口大小等于p的长度
+        if right - left + 1 == len(p):
+            if valid == len(need):
+                result.append(left)
+            
+            # 移除左边界
+            remove_char = s[left]
+            if remove_char in need:
+                if window[remove_char] == need[remove_char]:
+                    valid -= 1
+                window[remove_char] -= 1
+            
+            left += 1
+    
+    return result
+
+# 示例
+print(findAnagrams("cbaebabacd", "abc"))  # [0, 6]
+```
+
+### 15. 滑动窗口中位数（LeetCode 480）
+**题目**：计算滑动窗口的中位数。
+
+```python
+import heapq
+
+def medianSlidingWindow(nums, k):
+    """
+    双堆法：大顶堆存小的一半，小顶堆存大的一半
+    """
+    # Python只有小顶堆，用负数模拟大顶堆
+    max_heap = []  # 存较小的一半（负数）
+    min_heap = []  # 存较大的一半
+    
+    # 延迟删除字典
+    to_remove = {}
+    
+    def prune(heap, is_max_heap):
+        """清理堆顶已删除的元素"""
+        while heap:
+            num = -heap[0] if is_max_heap else heap[0]
+            if (is_max_heap and -heap[0] in to_remove and to_remove[-heap[0]] > 0) or \
+               (not is_max_heap and heap[0] in to_remove and to_remove[heap[0]] > 0):
+                actual_num = -heapq.heappop(heap) if is_max_heap else heapq.heappop(heap)
+                to_remove[actual_num] -= 1
+            else:
+                break
+    
+    def get_median():
+        if k % 2 == 1:
+            return float(-max_heap[0])
+        else:
+            return (-max_heap[0] + min_heap[0]) / 2.0
+    
+    # 初始化第一个窗口
+    for i in range(k):
+        heapq.heappush(max_heap, -nums[i])
+    
+    # 平衡堆：将max_heap的一半移到min_heap
+    for _ in range(k // 2):
+        heapq.heappush(min_heap, -heapq.heappop(max_heap))
+    
+    result = [get_median()]
+    
+    for i in range(k, len(nums)):
+        out_num = nums[i - k]
+        in_num = nums[i]
+        balance = 0
+        
+        # 删除离开窗口的数
+        if out_num <= -max_heap[0]:
+            balance -= 1
+        else:
+            balance += 1
+        
+        to_remove[out_num] = to_remove.get(out_num, 0) + 1
+        
+        # 插入新数
+        if in_num <= -max_heap[0]:
+            heapq.heappush(max_heap, -in_num)
+            balance += 1
+        else:
+            heapq.heappush(min_heap, in_num)
+            balance -= 1
+        
+        # 平衡堆
+        if balance < 0:
+            heapq.heappush(max_heap, -heapq.heappop(min_heap))
+        elif balance > 0:
+            heapq.heappush(min_heap, -heapq.heappop(max_heap))
+        
+        prune(max_heap, True)
+        prune(min_heap, False)
+        
+        result.append(get_median())
+    
+    return result
+
+# 时间复杂度: O(n * logk)
+# 空间复杂度: O(k)
+```
+
+---
+
+## 📌 链表操作
+
+### 16. 反转链表（LeetCode 206）
+**题目**：反转一个单链表。
+
+```python
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def reverseList(head):
+    """
+    迭代法
+    """
+    prev = None
+    current = head
+    
+    while current:
+        next_temp = current.next
+        current.next = prev
+        prev = current
+        current = next_temp
+    
+    return prev
+
+# 递归法
+def reverseList_recursive(head):
+    if not head or not head.next:
+        return head
+    
+    new_head = reverseList_recursive(head.next)
+    head.next.next = head
+    head.next = None
+    
+    return new_head
+
+# 时间复杂度: O(n)
+# 空间复杂度: 迭代O(1), 递归O(n)
+```
+
+### 17. 合并两个有序链表（LeetCode 21）
+**题目**：将两个升序链表合并为一个新的升序链表。
+
+```python
+def mergeTwoLists(l1, l2):
+    """
+    迭代法
+    """
+    dummy = ListNode(0)
+    current = dummy
+    
+    while l1 and l2:
+        if l1.val <= l2.val:
+            current.next = l1
+            l1 = l1.next
+        else:
+            current.next = l2
+            l2 = l2.next
+        current = current.next
+    
+    current.next = l1 if l1 else l2
+    
+    return dummy.next
+
+# 递归法
+def mergeTwoLists_recursive(l1, l2):
+    if not l1:
+        return l2
+    if not l2:
+        return l1
+    
+    if l1.val <= l2.val:
+        l1.next = mergeTwoLists_recursive(l1.next, l2)
+        return l1
+    else:
+        l2.next = mergeTwoLists_recursive(l1, l2.next)
+        return l2
+
+# 时间复杂度: O(n + m)
+# 空间复杂度: 迭代O(1), 递归O(n + m)
+```
+
+### 18. 环形链表（LeetCode 141）
+**题目**：判断链表是否有环。
+
+```python
+def hasCycle(head):
+    """
+    快慢指针
+    """
+    if not head or not head.next:
+        return False
+    
+    slow = head
+    fast = head.next
+    
+    while slow != fast:
+        if not fast or not fast.next:
+            return False
+        slow = slow.next
+        fast = fast.next.next
+    
+    return True
+
+# 时间复杂度: O(n)
+# 空间复杂度: O(1)
+```
+
+### 19. 环形链表II（LeetCode 142）
+**题目**：找到环的入口节点。
+
+```python
+def detectCycle(head):
+    """
+    快慢指针 + 数学推导
+    """
+    if not head or not head.next:
+        return None
+    
+    # 第一次相遇
+    slow = head
+    fast = head
+    
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        
+        if slow == fast:
+            # 从相遇点和头节点同时出发，第二次相遇即为环入口
+            slow = head
+            while slow != fast:
+                slow = slow.next
+                fast = fast.next
+            return slow
+    
+    return None
+
+# 数学原理：
+# 设环前长度为a，环长度为b
+# 第一次相遇时：slow走了s步，fast走了2s步
+# 2s = s + nb => s = nb
+# 环入口：从head走a步，从相遇点走a步也到达环入口
+
+# 时间复杂度: O(n)
+# 空间复杂度: O(1)
+```
+
+### 20. 删除链表的倒数第N个节点（LeetCode 19）
+**题目**：删除链表的倒数第n个节点。
+
+```python
+def removeNthFromEnd(head, n):
+    """
+    双指针
+    """
+    dummy = ListNode(0)
+    dummy.next = head
+    
+    fast = dummy
+    slow = dummy
+    
+    # fast先走n步
+    for _ in range(n):
+        fast = fast.next
+    
+    # 同时移动直到fast到最后
+    while fast.next:
+        slow = slow.next
+        fast = fast.next
+    
+    # 删除节点
+    slow.next = slow.next.next
+    
+    return dummy.next
+
+# 时间复杂度: O(n)
+# 空间复杂度: O(1)
+```
+
+---
+
 ## 🎯 刷题策略
 
 ### 按难度分配

@@ -3,25 +3,25 @@
 ## 📋 待完成任务
 
 ### 高优先级 🔴
-- [ ] 添加BERT vs GPT详细对比
-- [ ] 添加位置编码（Positional Encoding）详解
-- [ ] 添加KV-Cache机制说明
-- [ ] 添加滑动窗口算法题（至少5道）
-- [ ] 添加链表操作题（反转、合并等）
+- [x] 添加BERT vs GPT详细对比 ✅ (pretrained_models.md)
+- [x] 添加位置编码（Positional Encoding）详解 ✅ (pretrained_models.md)
+- [x] 添加KV-Cache机制说明 ✅ (inference_optimization.md)
+- [x] 添加滑动窗口算法题（至少5道）✅ (algorithm_questions.md)
+- [x] 添加链表操作题（反转、合并等）✅ (algorithm_questions.md)
 
 ### 中优先级 🟡
-- [ ] 创建 pretrained_models.md 文件
-- [ ] 创建 code_agent.md 文件
-- [ ] 添加LoRA、QLoRA微调技术
-- [ ] 添加RAG（检索增强生成）原理
-- [ ] 添加Prompt Engineering技巧
-- [ ] 添加RoPE位置编码详解
+- [x] 创建 pretrained_models.md 文件 ✅
+- [x] 创建 code_agent.md 文件 ✅
+- [x] 添加LoRA、QLoRA微调技术 ✅ (llm_finetuning.md)
+- [x] 添加RAG（检索增强生成）原理 ✅ (rag_system.md)
+- [x] 添加Prompt Engineering技巧 ✅ (prompt_engineering.md)
+- [x] 添加RoPE位置编码详解 ✅ (pretrained_models.md)
 
 ### 低优先级 🟢
-- [ ] 添加大模型推理优化（量化、剪枝）
+- [x] 添加大模型推理优化（量化、剪枝）✅ (inference_optimization.md, model_compression.md)
 - [ ] 添加MoE（混合专家）模型原理
-- [ ] 添加长上下文处理技术
-- [ ] 添加多模态模型（VLM）基础
+- [x] 添加长上下文处理技术 ✅ (long_context.md)
+- [x] 添加多模态模型（VLM）基础 ✅ (multimodal_llm.md)
 
 ## 📊 进度追踪
 
